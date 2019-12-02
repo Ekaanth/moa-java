@@ -54,7 +54,6 @@ public class ExperimenterApplication {
         	
     } 
 	
-// test m
 	public static void Experiment() throws IOException {
 		
 		String dirPath = new String("D:Leiden/AML/data/");
