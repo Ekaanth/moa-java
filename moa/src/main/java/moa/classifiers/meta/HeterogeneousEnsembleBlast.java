@@ -58,12 +58,16 @@ public class HeterogeneousEnsembleBlast extends HeterogeneousEnsembleAbstract im
 	
 	private static final long serialVersionUID = 1L;
 
-	protected boolean[][] onlineHistory;
+	public boolean[][] onlineHistory;
 	
 	public int[] activeClassifierWins = new int[7];
 	
 	public int[] getActiveClassifierWins() {
 		return activeClassifierWins;
+	}
+	
+	public boolean[][] getOnlineHistory(){
+		return onlineHistory;
 	}
 	
 	public IntOption windowSizeOption = new IntOption("windowSize", 'w',

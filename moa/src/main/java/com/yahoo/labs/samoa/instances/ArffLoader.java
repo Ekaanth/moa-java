@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StreamTokenizer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -160,7 +161,12 @@ public class ArffLoader {
                     } else if (streamTokenizer.sval != null && (streamTokenizer.ttype == StreamTokenizer.TT_WORD
                             || streamTokenizer.ttype == 34 || streamTokenizer.ttype == 39)) {
                         //System.out.println(streamTokenizer.sval + "Str");
+                    	if(streamTokenizer.sval == "numeric")
+                    		System.out.println("it's numeric!!!!!!!!!!!!!!!");
                         boolean isNumeric = this.instanceInformation.attribute(numAttribute).isNumeric();
+                        System.out.println("isNumeric: " + Boolean.toString(isNumeric));
+                        System.out.println(this.instanceInformation.attribute(numAttribute).toString());
+                        System.out.println(String.valueOf(streamTokenizer.sval));
                         double value;
                         if ("?".equals(streamTokenizer.sval)) {
                             value = Double.NaN; //Utils.missingValue();
@@ -369,11 +375,11 @@ public class ArffLoader {
                     if (token.startsWith("@RELATION")) {
                         streamTokenizer.nextToken();
                         relation = streamTokenizer.sval;
-                      //  System.out.println("RELATION " + relation);
+                        System.out.println("RELATION " + relation);
                     } else if (token.startsWith("@ATTRIBUTE")) {
                         streamTokenizer.nextToken();
                         String name = streamTokenizer.sval;
-                        //System.out.println("* " + name);
+                        System.out.println("* " + name);
                         if (name == null) {
                             name = Double.toString(streamTokenizer.nval);
                         }
@@ -387,10 +393,10 @@ public class ArffLoader {
 
                                 if (streamTokenizer.sval != null) {
                                     attributeLabels.add(streamTokenizer.sval);
-                                   // System.out.print(streamTokenizer.sval + ",");
+                                    System.out.print(streamTokenizer.sval + ",");
                                 } else {
                                     attributeLabels.add(Double.toString(streamTokenizer.nval));
-                                    //System.out.print(streamTokenizer.nval + ",");
+                                    System.out.print(streamTokenizer.nval + ",");
                                 }
 
                                 streamTokenizer.nextToken();
@@ -413,7 +419,9 @@ public class ArffLoader {
                              } else {
                              inputAttributes.add(new Attribute(name));
                              }*/
-                            auxAttributes.add(new Attribute(name));
+                        	//System.out.println("name "+name.toString());
+                        	//List<String> types = Arrays.asList(type);
+                        	auxAttributes.add(new Attribute(name));
                             numAttributes++;
                         }
 

@@ -189,7 +189,7 @@ public abstract class HeterogeneousEnsembleAbstract extends AbstractClassifier i
 			}
 		}
 		super.prepareForUseImpl(monitor, repository);
-		System.out.println(activeClassifiersOption.getValue());
+		//System.out.println(activeClassifiersOption.getValue());
 		topK = topK(historyTotal, activeClassifiersOption.getValue());
 	}
 
