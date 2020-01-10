@@ -40,14 +40,14 @@ public class ExperimenterApplication {
 			writer.write(mat[i] + " ");
 	}
 	
-	public static void print2D(boolean mat[][], BufferedWriter writer) throws IOException  
+	public static void print2D(double mat[][], BufferedWriter writer) throws IOException  
     { 
         // Loop through all rows 
         for (int i = 0; i < mat.length; i++) {
   
             // Loop through all elements of current row 
             for (int j = 0; j < mat[i].length; j++) {
-            	writer.write(Boolean.toString(mat[i][j]) + " ");
+            	writer.write(mat[i][j] + " ");
             }
             writer.newLine();    
         }
@@ -56,7 +56,8 @@ public class ExperimenterApplication {
 	
 	public static void Experiment() throws IOException {
 		
-		String dirPath = new String("D:Leiden/AML/data/");
+		String dirPath = new String("/home/karolis/AML/");
+		System.out.print(dirPath);
 		File folder = new File(dirPath+"arff/");
 		File[] listOfFiles = folder.listFiles();
 
@@ -69,7 +70,7 @@ public class ExperimenterApplication {
 			int numInstances = 10000;
 			boolean isTesting = true;
 
-			Classifier learner = new HeterogeneousEnsembleBlast();
+			Classifier learner = new HeterogeneousEnsembleBlastFadingFactors();
 			//HyperplaneGenerator stream = new HyperplaneGenerator();
 
 			ArffFileStream stream = new ArffFileStream(dirPath+"/arff/"+listOfFiles[i].getName(), -1);
@@ -103,20 +104,23 @@ public class ExperimenterApplication {
 
 			writer.newLine();
 			
-			int[] activeClassifierWins = ((HeterogeneousEnsembleBlast) learner).getActiveClassifierWins();    
+			        
 			
-			for (int j = 0; j < ((HeterogeneousEnsembleBlast) learner).ensemble.length; j++) {
-				writer.write(Integer.toString(i));
+			// get the classes in ensemble
+			for (int j = 0; j < ((HeterogeneousEnsembleBlastFadingFactors) learner).ensemble.length; j++) {
+				writer.write(Integer.toString(j));
 				writer.newLine();
-				writer.write(((HeterogeneousEnsembleBlast) learner).ensemble[i].getModel().getClass().toString());
+				writer.write(((HeterogeneousEnsembleBlastFadingFactors) learner).ensemble[j].getModel().getClass().toString());
 				writer.newLine();
 			}
-
+			
+			// The active classifier counts:
+			int[] activeClassifierWins = ((HeterogeneousEnsembleBlastFadingFactors) learner).getActiveClassifierWins();
 			print_array(activeClassifierWins, writer);
 			
 			writer.newLine();
-			
-			final boolean[][] onlineHistory = ((HeterogeneousEnsembleBlast) learner).getOnlineHistory();
+			// performance matrix
+			final double[][] onlineHistory = ((HeterogeneousEnsembleBlastFadingFactors) learner).getOnlineHistory();
 			//System.out.println(Arrays.deepToString(onlineHistory));
 			writer.newLine();
 			print2D(onlineHistory,writer);

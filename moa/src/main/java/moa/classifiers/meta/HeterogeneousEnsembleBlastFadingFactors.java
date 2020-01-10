@@ -54,9 +54,23 @@ import moa.classifiers.MultiClassClassifier;
  */
 public class HeterogeneousEnsembleBlastFadingFactors
 		extends HeterogeneousEnsembleAbstract implements MultiClassClassifier {
-
+	
+	// Run written data: 
+	public double[][] onlineHistory;
+	
+	public int[] activeClassifierWins = new int[7];
+	
+	public int[] getActiveClassifierWins() {
+		return activeClassifierWins;
+	}
+	
+	public double[][] getOnlineHistory(){
+		return onlineHistory;
+	}
+	
+	
 	private static final long serialVersionUID = 1L;
-
+	
 	// Makes the model slightly more fault tolerant.
 	// Sometimes one of the base-models crashes, resulting
 	// in the meta-algorithm to crash as well. We ignore
@@ -65,11 +79,6 @@ public class HeterogeneousEnsembleBlastFadingFactors
 
 	private int trainingErrors;
 	
-	public int[] activeClassifierWins = new int[7];
-	
-	public int[] getActiveClassifierWins() {
-		return activeClassifierWins;
-	}
 
 	public FloatOption alphaOption = new FloatOption("alpha", 'a',
 			"The fading factor.", 0.999, 0, 1);
@@ -77,6 +86,9 @@ public class HeterogeneousEnsembleBlastFadingFactors
 	@Override
 	public void resetLearningImpl() {
 		this.historyTotal = new double[this.ensemble.length];
+		// initiate online history rows = ensemble members, columns = instances
+		// The instances are set to one million because, jank
+		this.onlineHistory = new double[this.ensemble.length][1000000];
 		for (int i = 0; i < this.ensemble.length; ++i) {
 			this.historyTotal[i] = 1.0;
 		}
@@ -94,13 +106,16 @@ public class HeterogeneousEnsembleBlastFadingFactors
 		for (int i = 0; i < this.ensemble.length; i++) {
 
 			// Online Performance estimation
+			// vote of model:
 			double[] votes = ensemble[i].getVotesForInstance(inst);
+			// TRUE FALSE of model:
 			boolean correct = (maxIndex(votes) * 1.0 == inst.classValue());
 
 			historyTotal[i] = historyTotal[i] * alphaOption.getValue();
 			if (correct) {
 				historyTotal[i] += 1 - alphaOption.getValue();
 			}
+			onlineHistory[i][instancesSeen] = historyTotal[i];
 			try {
 				this.ensemble[i].trainOnInstance(inst);
 			} catch (RuntimeException e) {
@@ -112,7 +127,7 @@ public class HeterogeneousEnsembleBlastFadingFactors
 				}
 			}
 		}
-
+		// BLAST:
 		instancesSeen += 1;
 		if (instancesSeen % gracePerionOption.getValue() == 0) {
 			topK = topK(historyTotal, activeClassifiersOption.getValue());
